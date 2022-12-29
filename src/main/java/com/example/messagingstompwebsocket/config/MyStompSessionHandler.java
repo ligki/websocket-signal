@@ -1,26 +1,26 @@
 package com.example.messagingstompwebsocket.config;
+
 import com.example.messagingstompwebsocket.dto.ResponseMessage;
-import com.example.messagingstompwebsocket.dto.RequestMessage;
-import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaders;
 import org.springframework.messaging.simp.stomp.StompSession;
 import org.springframework.messaging.simp.stomp.StompSessionHandlerAdapter;
+
 import java.lang.reflect.Type;
 
-@Data
+@Getter
+@Setter
 public class MyStompSessionHandler extends StompSessionHandlerAdapter {
 
-    private String url;
     private String topic;
     private String sendTo;
-    public MyStompSessionHandler(String url) {
-        this.url = url;
-        this.topic = "%s/topic/greetings".formatted(url);
-        this.sendTo = "%s/app/hello".formatted(url);
+    public MyStompSessionHandler() {
+        this.topic = "/topic/greetings";
+        this.sendTo = "/app/hello";
     }
 
     private Logger logger = LogManager.getLogger(MyStompSessionHandler.class);
@@ -43,9 +43,8 @@ public class MyStompSessionHandler extends StompSessionHandlerAdapter {
 
     @Override
     public void handleFrame(StompHeaders headers, Object payload) {
-        logger.info("Received : " + headers);
         ResponseMessage msg = (ResponseMessage) payload;
-        logger.info("Received : " + msg.getMessage());
+        System.out.printf("Session %s: %s%n", headers.getSession(), msg.getMessage());
     }
 
 }
